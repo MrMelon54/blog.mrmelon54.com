@@ -1,0 +1,24 @@
+meta:
+  title: "Benchmark | Melon Copy"
+  author: "Melon"
+  og-title: "Benchmark"
+  og-url: "https://copy.mrmelon54.com/post/2023/04/24/benchmark"
+  og-type: "object"
+  og-image: "https://copy.mrmelon54.com/logo.svg"
+  og-site_name: "copy.mrmelon54.com"
+  post-date: "2023-04-24"
+content: |
+  <header>
+    <h1>Benchmark</h1>
+  </header>
+  <main>
+    <p>This is the benchmarks I use</p>
+
+    <ul>
+      <li><a href="https://github.com/akopytov/sysbench" target="_blank">Sysbench</a></li>
+      <li><a href="https://www.basemark.com/benchmarks/basemark-gpu/" target="_blank">Basemark GPU</a></li>
+      <li><a href="https://benchmark.unigine.com/" target="_blank">Unigine Benchmark</a></li>
+    </ul>
+
+    <p><a href="/assets/2023/04/24/benchmark-install.sh" download>Installer</a></p>
+  </main>
