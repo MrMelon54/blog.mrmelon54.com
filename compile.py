@@ -7,7 +7,8 @@ from os.path import dirname, basename
 import importlib, importlib.util
 
 def main():
-  shutil.rmtree("build")
+  if os.path.exists("build"):
+    shutil.rmtree("build")
   shutil.copytree("public/","build/")
   gen_dynamic_pages()
   gen_static_pages()
