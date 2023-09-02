@@ -16,12 +16,6 @@ content: |
 
     <p>All of the armor does not have thorns, and the sword is not enchanted with fire aspect or looting.</p>
 
-    <style>
-    h1 { color: tomato; }
-    h2 { color: lightseagreen; }
-    h3 { color: orchid; }
-    </style>
-
     <h2>Sword</h2>
     <ol>
       <li>Combine Sharpness V, Smite V, Bane of Arthropods V</li>
