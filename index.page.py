@@ -21,6 +21,7 @@ def render(writer):
   writer.write("<main>\n")
   writer.write("<ul>\n")
   g = glob("post/*/*/*/*.page")
+  g.sort(reverse=True)
   for i in g:
     with open(i, 'r') as f:
       key = basename(i)[:-5]

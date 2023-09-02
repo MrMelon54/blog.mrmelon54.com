@@ -1,0 +1,54 @@
+meta:
+  title: "Chroot Update Grub | Melon Copy"
+  author: "Melon"
+  og-title: "Chroot Update Grub"
+  og-url: "https://copy.mrmelon54.com/post/2023/09/02/chroot-update-grub"
+  og-type: "object"
+  og-image: "https://copy.mrmelon54.com/logo.svg"
+  og-site_name: "copy.mrmelon54.com"
+  post-date: "2023-09-02"
+content: |
+  <header>
+    <h1>Chroot Update Grub</h1>
+  </header>
+  <main>
+    <style>
+      h1 { color: tomato; }
+      h2 { color: lightseagreen; }
+      h3 { color: orchid; }
+    </style>
+
+    <h2>Prepare</h2>
+    <ul>
+      <li><code><pre>mount /dev/sd?? /mnt</pre></code> - choose the correct drive</li>
+      <li><code><pre>mount --bind /??? /mnt/???</pre></code> - for <code><pre>/dev</pre></code>, <code><pre>/sys</pre></code> and <code><pre>/proc</pre></code></li>
+    </ul>
+
+    <h2>Boot stuff</h2>
+    <ul>
+      <li>Check <code><pre>/mnt/boot/grub</pre></code> has a bunch of <code><pre>.mod</pre></code> files and <code><pre>grub.cfg</pre></code></li>
+      <li>If not then mount it</li>
+      <li><code><pre>mount /dev/sd?? /mnt/boot</pre></code> (find the correct boot partition)</li>
+    </ul>
+
+    <h2>New root</h2>
+    <ul>
+      <li><code><pre>chroot /mnt</pre></code></li>
+      <li>Check <code><pre>/boot/grub</pre></code> has a bunch of <code><pre>.mod</pre></code> files and <code><pre>grub.cfg</pre></code></li>
+    </ul>
+
+    <h2>Inside the chroot</h2>
+    <ul>
+      <li><code><pre>update-grub</pre></code> rebuilds <code><pre>/boot/grub/grub.cfg</pre></code></li>
+      <li><code><pre>exit</pre></code></li>
+    </ul>
+
+    <h2>Clean-up</h2>
+    <ul>
+      <li><code><pre>umount /mnt/dev</pre></code></li>
+      <li><code><pre>umount /mnt/sys</pre></code></li>
+      <li><code><pre>umount /mnt/proc</pre></code></li>
+      <li><code><pre>umount /mnt/boot</pre></code> - only if you mounted it separately earlier</li>
+      <li><code><pre>umount /mnt</pre></code></li>
+    </ul>
+  </main>
