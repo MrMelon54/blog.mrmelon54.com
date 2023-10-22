@@ -1,0 +1,195 @@
+<!--
+meta:
+  title: "Bootable USB | Melon Copy"
+  author: "Melon"
+  og-title: "Bootable USB"
+  og-url: "https://copy.mrmelon54.com/post/2023/02/06/bootable-usb"
+  og-type: "object"
+  og-image: "https://copy.mrmelon54.com/logo.svg"
+  og-site_name: "copy.mrmelon54.com"
+  post-date: "2023-02-06"
+-->
+
+<header>
+  <h1>Bootable USB</h1>
+</header>
+<main>
+  <p>
+    This is how I installed grub unto my external hard drive (GPT) which had
+    Ubuntu 17.04 installed. When you do this it allows you to boot your Ubuntu
+    on any PC which supports UEFI by using the grub on the external without
+    relying on the PC grub. It can also serve as backup grub in case the is
+    problem with EFI of Windows.
+  </p>
+
+  <h3>Installing Grub to an external hard drive that has Ubuntu installed</h3>
+  <ol>
+    <li>
+      <p>Boot into an Ubuntu live USB and connect the external hard drive.</p>
+    </li>
+    <li>
+      <p>List partitions of all devices: <code class="inline">lsblk</code></p>
+    </li>
+    <li>
+      <p>
+        From the results of <code class="inline">lsblk</code>, identify the
+        linux partition and also the efi partition of the external hard drive,
+        i.e. <code class="inline">/dev/sdXY1</code> and
+        <code class="inline">/dev/sdXY2</code> respectively. Replace
+        <code class="inline">XY1</code> and <code class="inline">XY2</code> with
+        your own partition names.
+      </p>
+    </li>
+    <li>
+      <p>Special mount the linux partition:</p>
+      <code><pre>sudo mount /dev/sdXY1 /mnt</pre></code>
+    </li>
+    <li>
+      <p>Mount critical virtual filesystems:</p>
+      <code>
+        <pre>
+for i in /dev /dev/pts /proc /sys /run; do sudo mount -B $i /mnt$i; done</pre
+        >
+      </code>
+    </li>
+    <li>
+      <p>
+        <code class="inline">chroot</code> into the Linux partition you mounted:
+      </p>
+      <code><pre>sudo chroot /mnt</pre></code>
+      <p>You are now in the external hard drive's linux filesystem.</p>
+    </li>
+    <li>
+      <p>Create the directory where grub would install its files:</p>
+      <code><pre>mkdir -p /boot/efi</pre></code>
+      <p>If it already exists, then skip to step 8.</p>
+    </li>
+    <li>
+      <p>Mount the efi partition from step 3:</p>
+      <code><pre>mount /dev/sdXY2 /boot/efi</pre></code>
+    </li>
+    <li>
+      <p>Install grub to the external hard drive:</p>
+      <code><pre>grub-install /dev/sdX</pre></code>
+    </li>
+    <li>
+      <p>Update grub:</p>
+      <code><pre>update-grub</pre></code>
+    </li>
+    <li>
+      <p>Find the UUID of the efi partition (aka 'vfat') and note it down:</p>
+      <code><pre>blkid</pre></code>
+      <p>or</p>
+      <code><pre>ls -l /dev/disk/by-uuid</pre></code>
+    </li>
+    <li>
+      <p>Now we need to tell fstab to mount that efi partition on boot:</p>
+      <code>
+        <pre>
+          cp /etc/fstab /etc/fstab.bak
+          sudo nano /etc/fstab  
+        </pre>
+      </code>
+      <p>
+        Add the below two lines to fstab replacing xxxx-xxxx with the UUID from
+        step 11:
+      </p>
+      <code>
+        <pre>
+          #my modified fstab to mount external hard drive's esp  
+          UUID=xxxx-xxxx   /boot/efi   vfat   umask=0077   0   1  
+        </pre>
+      </code>
+      <p>
+        Make sure to comment out the fstab entry of the Windows esp so it
+        doesn't conflict.
+      </p>
+    </li>
+    <li>
+      <p>Exit the chroot:</p>
+      <code><pre>exit</pre></code>
+    </li>
+    <li>
+      <p>Reboot the PC:</p>
+      <code><pre>sudo reboot</pre></code>
+    </li>
+  </ol>
+  <p>
+    At this point when you reboot and choose your external device from the EFI
+    boot manager, it will boot to grub.
+  </p>
+  <p>
+    To make Ubuntu automatically boot when you insert the external and Windows
+    to automatically boot when the external is not inserted you would have to
+    create a custom boot entry for Ubuntu to point to the efi on the external
+    drive:
+  </p>
+  <h3>
+    Creating a custom boot entry for Ubuntu to point to efi on the external HD
+  </h3>
+  <p>From Windows <em>EasyUEFI</em> can add or remove boot entries.</p>
+  <p>From Linux <em>efibootmgr</em> can add or remove boot entries.</p>
+  <p><strong>Alternative #1</strong> – using EasyUEFI</p>
+  <ol>
+    <li><p>In Windows download EasyUEFI, install it and run.</p></li>
+    <li>
+      <p>Choose the <strong>EFI options manager</strong></p>
+    </li>
+    <li>
+      <p>Choose <strong>create 'new entry'</strong> with + sign</p>
+    </li>
+    <li>
+      <p>
+        Choose <strong>Linux or other OS</strong> and give it a name in the
+        description box
+      </p>
+    </li>
+    <li>
+      <p>
+        Select the FAT32 EFI partition on the external drive that contains the
+        grub bootloader
+      </p>
+    </li>
+    <li>
+      <p>Choose <strong>browse</strong></p>
+    </li>
+    <li>
+      <p>
+        Navigate to <strong>/efi/ubuntu/shimx64.efi</strong> or
+        <strong>/efi/ubuntu/grubx64</strong>
+      </p>
+    </li>
+    <li><p>Save</p></li>
+    <li><p>Move it to the top of the boot entries list</p></li>
+    <li><p>Restart</p></li>
+  </ol>
+  <p>
+    <strong>Alternative #2</strong> – using
+    <code class="inline">efibootmgr</code>
+  </p>
+  <ol>
+    <li>
+      <p>List boot menu entries:</p>
+      <code><pre>efibootmgr</pre></code>
+    </li>
+    <li>
+      <p>Create a boot entry:</p>
+      <code><pre>efibootmgr -c [-L label] [-d /dev/sdX]</pre></code>
+      <p>e.g.: <code>efibootmgr -c -L myubuntu -d /dev/sdX</code></p>
+      <p>This boot entry would automatically be the first entry.</p>
+      <p>
+        <code class="inline">/dev/sdX</code> is the external hard drive with the
+        grub bootloader.
+      </p>
+    </li>
+    <li>
+      <p>
+        You can now reboot and without your intervention Ubuntu would
+        automatically boot when external hard drive is plugged in. When the
+        external hard drive is not plugged in, the PC would skip our
+        <strong>Ubuntu</strong> boot entry to the next entry which is probably
+        <strong>Windows Boot Manager</strong>.
+      </p>
+    </li>
+  </ol>
+</main>
