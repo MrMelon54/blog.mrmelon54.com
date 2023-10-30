@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 import io
 from compile import compile_page, page_ext
 import os.path
 
 
-class MyServer(BaseHTTPRequestHandler):
+class MyServer(SimpleHTTPRequestHandler):
     def do_GET(self):
         p = self.path
         if p.startswith("/"):
@@ -29,9 +29,8 @@ class MyServer(BaseHTTPRequestHandler):
                         self.wfile.write(b"Failed to compile page")
                 return
 
-        self.send_response(404)
-        self.end_headers()
-        self.wfile.write(b"Missing page")
+        self.path = "public/" + p
+        SimpleHTTPRequestHandler.do_GET(self)
 
 
 if __name__ == "__main__":

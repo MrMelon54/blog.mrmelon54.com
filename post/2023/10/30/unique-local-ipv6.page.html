@@ -1,0 +1,55 @@
+<!--
+meta:
+  title: "Unique Local IPv6 | Melon Copy"
+  author: "Melon"
+  og-title: "Unique Local IPv6"
+  og-url: "https://copy.mrmelon54.com/post/2023/10/30/unique-local-ipv6"
+  og-type: "object"
+  og-image: "https://copy.mrmelon54.com/logo.svg"
+  og-site_name: "copy.mrmelon54.com"
+  post-date: "2023-10-30"
+-->
+
+<header>
+  <h1>Unique Local IPv6</h1>
+</header>
+<main>
+  <div>
+    <button id="generate-button" onclick="generate()">Generate</button>
+  </div>
+  <div><h2>64-bit subnetting</h2></div>
+  <table>
+    <tr>
+      <th>Prefix:</th>
+      <td><code id="ipv6-prefix"></code></td>
+    </tr>
+    <tr>
+      <th>First subnet:</th>
+      <td><code id="ipv6-first"></code></td>
+    </tr>
+    <tr>
+      <th>Last subnet:</th>
+      <td><code id="ipv6-last"></code></td>
+    </tr>
+  </table>
+</main>
+
+<script>
+  function random_hex(len, pad = false) {
+    let v = Math.floor(Math.random() * Math.pow(16, len)).toString(16);
+    return pad ? ("0000" + v).slice(-len) : v;
+  }
+
+  function random_ipv6() {
+    return ["fd" + random_hex(2, true), random_hex(4), random_hex(4)].join(":");
+  }
+
+  function generate() {
+    var prefix = random_ipv6();
+    document.getElementById("ipv6-prefix").textContent = prefix + "::/48";
+    document.getElementById("ipv6-first").textContent = prefix + "::/64";
+    document.getElementById("ipv6-last").textContent = prefix + ":ffff::/64";
+  }
+
+  generate();
+</script>
