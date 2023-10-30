@@ -5,13 +5,13 @@ from meta_reader import load_meta
 
 def meta():
     return {
-        "title": "Melon Copy",
+        "title": "Melon Blog",
         "author": "Melon",
-        "og-title": "Melon Copy",
-        "og-url": "https://copy.mrmelon54.com",
+        "og-title": "Melon Blog",
+        "og-url": "https://blog.mrmelon54.com",
         "og-type": "object",
-        "og-image": "https://copy.mrmelon54.com/logo.svg",
-        "og-site_name": "copy.mrmelon54.com",
+        "og-image": "https://blog.mrmelon54.com/logo.svg",
+        "og-site_name": "blog.mrmelon54.com",
     }
 
 
