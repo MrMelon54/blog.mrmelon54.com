@@ -30,6 +30,8 @@ Address = fd{redacted}::/48
 ListenPort = 51820
 PrivateKey = {redacted}
 
+PreUp = sysctl -w net.ipv4.ip_forward=1
+PreUp = sysctl -w net.ipv4.conf.all.forwarding=1
 PreUp = sysctl -w net.ipv6.conf.all.forwarding=1
 PostUp = ip6tables -I FORWARD -i %i -o %i -j ACCEPT
 PostUp = ip6tables -A FORWARD -i %i -j ACCEPT
