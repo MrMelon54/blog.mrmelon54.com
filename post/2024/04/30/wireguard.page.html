@@ -1,0 +1,63 @@
+<!--
+meta:
+  title: "WireGuard | Melon Blog"
+  author: "Melon"
+  og-title: "WireGuard"
+  og-url: "https://blog.mrmelon54.com/post/2024/04/30/wireguard"
+  og-type: "object"
+  og-image: "https://blog.mrmelon54.com/logo.svg"
+  og-site_name: "blog.mrmelon54.com"
+  post-date: "2024-04-30"
+-->
+
+<header>
+  <h1>WireGuard</h1>
+</header>
+<main>
+  <h2>1. Key Pairs</h2>
+  <p>On each peer a private and public key needs to be generated.</p>
+  <code>
+    <pre>wg genkey | (umask 0077 && tee peer-example.key) | wg pubkey > peer-example.pub</pre>
+  </code>
+
+  <hr />
+  <h2>2. Server Config</h2>
+  <p><code class="inline">/etc/wireguard/wg0.conf</code></p>
+  <code>
+    <pre>
+[Interface]
+Address = fd{redacted}::/48
+ListenPort = 51820
+PrivateKey = {redacted}
+
+PreUp = sysctl -w net.ipv6.conf.all.forwarding=1
+PostUp = ip6tables -I FORWARD -i %i -o %i -j ACCEPT
+PostUp = ip6tables -A FORWARD -i %i -j ACCEPT
+PostUp = ip6tables -A FORWARD -o %i -j ACCEPT
+PostUp = ip6tables -t nat -A POSTROUTING -o %i -j MASQUERADE
+PostDown = ip6tables -D FORWARD -i %i -o %i -j ACCEPT
+PostDown = ip6tables -D FORWARD -i %i -j ACCEPT
+PostDown = ip6tables -D FORWARD -o %i -j ACCEPT
+PostDown = ip6tables -t nat -D POSTROUTING -o %i -j MASQUERADE
+
+[Peer]
+# my peer
+PublicKey = {redacted}
+AllowedIPs = fd{redacted}:1::/64
+    </pre>
+  </code>
+  <h2>3. Client Config</h2>
+  <p>Paste into Windows WireGuard client or setup Linux client using network manager.</p>
+  <code>
+    <pre>
+[Interface]
+PrivateKey = {redacted}
+Address = fd{redacted}:1::/64
+
+[Peer]
+PublicKey = {redacted}
+AllowedIPs = {redacted}::/48
+Endpoint = {redacted}:51820
+    </pre>
+  </code>
+</main>
